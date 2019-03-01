@@ -10,7 +10,7 @@ class ProductControl extends StatelessWidget{
     return RaisedButton(
       color: Theme.of(context).primaryColor, // 调用context的primaryColor属性，和app的theme保持一致
       onPressed: () {
-        updateProduct('Updating product');
+        updateProduct({'title': 'Chocolate', 'image': 'assets/food.jpg'});
       },
       child: Text('Add Product'),
     );

@@ -9,10 +9,6 @@ main() {
 } // void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  List<String> _products = [
-    'Food Tester'
-  ]; // Create new card when pressing the button
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
