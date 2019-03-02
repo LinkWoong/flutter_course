@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './pages/product.dart';
 
+// detail page
 class Products extends StatelessWidget {
   // Why Stateless? Because change does not happened here
   // It happened in product_manager.dart file
@@ -21,20 +21,9 @@ class Products extends StatelessWidget {
             children: <Widget>[
               FlatButton(
                 child: Text('Details'),
-                onPressed: () => Navigator.push<bool>(
-                        // the bool here, is to store the returned value of ProductPage
-                        // push methods receive 2 arguments, 1 is context and the other is MaterialPageRoute()
-                        // The latter provides animation for page navigation, and it also takes an argument which is builder method
-                        // The builder method contains the page that you want to jump to.
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => ProductPage(
-                              products[index]['title'],
-                              products[index]
-                                  ['image']), // passing a data into ProductPage
-                        )).then((bool value) {
-                      // then method: a function which is eventually executed when event occurs(navigation finished)
-                      // based on the value that passed back
+                onPressed: () => Navigator.pushNamed<bool>(
+                            context, '/product/' + index.toString()) // using named route
+                        .then((bool value) {
                       if (value) {
                         deleteProduct(index);
                       }

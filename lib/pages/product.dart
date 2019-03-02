@@ -6,6 +6,32 @@ class ProductPage extends StatelessWidget {
   final String title;
   final String imageUrl;
 
+  _showWarningDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Are you sure'),
+            content: Text('This action cannot be undone'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('DISCARD'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Text('CONTINUE'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context, true);
+                },
+              )
+            ],
+          );
+        });
+  }
+
   ProductPage(this.title, this.imageUrl);
   @override
   Widget build(BuildContext context) {
@@ -30,15 +56,17 @@ class ProductPage extends StatelessWidget {
                     child: RaisedButton(
                       color: Theme.of(context).accentColor,
                       child: Text('DELETE'),
-                      onPressed: () => Navigator.pop(context,
-                          true), // return to previous page, true -> Delete the page
+                      onPressed: () {
+                        _showWarningDialog(context);
+                      }, // return to previous page, true -> Delete the page
                     )),
               ],
             )),
         // The onWillPop argument receives a function that concerns about left upper corner return button.
         onWillPop: () {
           Navigator.pop(context, false);
-          return Future.value(false); // -> you're allowed to leave, but true will trigger another pop action
+          return Future.value(
+              false); // -> you're allowed to leave, but true will trigger another pop action
         });
   }
 }
