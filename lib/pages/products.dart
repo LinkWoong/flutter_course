@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import '../product_manager.dart';
 
 class ProductsPage extends StatelessWidget {
-  List<Map<String, String>> _products = []; // Create new card when pressing the button
-  final Function addProduct;
-  final Function deleteProduct;
-
-  ProductsPage(this._products, this.addProduct, this.deleteProduct);
+  List<Map<String, dynamic>> _products = []; // Create new card when pressing the button
+  ProductsPage(this._products);
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +30,6 @@ class ProductsPage extends StatelessWidget {
         appBar: AppBar(
           title: Text('Easy List'),
         ),
-        body: ProductManager(_products, addProduct, deleteProduct));
+        body: ProductManager(_products));
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/pages/auth.dart';
 import './pages/products.dart';
 import './pages/products_admin.dart';
 import './pages/product.dart';
@@ -16,10 +17,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, String>> _products = [];
+  // dynamic means mixed type
+  List<Map<String, dynamic>> _products = [];
 
   // lifting the state up
-  void _addProduct(Map<String, String> product) {
+  void _addProduct(Map<String, dynamic> product) {
     // receive an argument
     setState(() {
       _products.add(product);
@@ -42,13 +44,13 @@ class _MyAppState extends State<MyApp> {
         accentColor: Colors.deepPurple,
       ),
       // Auth page is always the first page
-      // home: AuthPage(),
+      home: AuthPage(),
       // register named routes, so page navigation could be implemented using name identifier
       routes: {
-        '/': (BuildContext context) =>
-            ProductsPage(_products, _addProduct, _deleteProduct),
+        '/products': (BuildContext context) =>
+            ProductsPage(_products),
         '/admin': (BuildContext context) =>
-            ProductsAdminPage(), // identifier, a named route
+            ProductsAdminPage(_addProduct, _deleteProduct), // identifier, a named route
       },
       // executed when navigated to a named route, which is not registered
       // return a route where we want to go to
@@ -74,8 +76,7 @@ class _MyAppState extends State<MyApp> {
       // This executes when onGenerateRoute fails, it is a default route
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(
-            builder: (BuildContext context) =>
-                ProductsPage(_products, _addProduct, _deleteProduct));
+            builder: (BuildContext context) => ProductsPage(_products));
       },
     );
   }
