@@ -3,6 +3,12 @@ import './product_create.dart';
 import './product_list.dart';
 
 class ProductsAdminPage extends StatelessWidget {
+
+  final Function addProduct;
+  final Function deleteProduct;
+
+  const ProductsAdminPage(this.addProduct, this.deleteProduct);
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -19,7 +25,7 @@ class ProductsAdminPage extends StatelessWidget {
                 ListTile(
                   title: Text('Go back to the products page'),
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/'); // '/' route has been registered in the main.dart file
+                    Navigator.pushReplacementNamed(context, '/products'); // '/' route has been registered in the main.dart file
                     // However, the list of products will be cleared. The reason for that is replacement of navigation stack.
                   },
                 )
@@ -39,7 +45,7 @@ class ProductsAdminPage extends StatelessWidget {
           body: TabBarView(
             // Note that the num of widgets should equal to the length in DefaultTabController, and AppBar
               children: <Widget>[
-                ProductCreatePage(),
+                ProductCreatePage(addProduct),
                 ProductListPage()
               ])
       ),

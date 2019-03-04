@@ -5,10 +5,10 @@ class Products extends StatelessWidget {
   // Why Stateless? Because change does not happened here
   // It happened in product_manager.dart file
 
-  final List<Map<String, String>> products;
-  final Function deleteProduct; // receive the
+  final List<Map<String, dynamic>> products;
+  // final Function deleteProduct; // receive the deleted product
   // constructor
-  Products(this.products, {this.deleteProduct}); // optional arguments
+  Products(this.products); // optional arguments
 
   Widget _buildProductItem(BuildContext context, int index) {
     return Card(
@@ -25,7 +25,7 @@ class Products extends StatelessWidget {
                             context, '/product/' + index.toString()) // using named route
                         .then((bool value) {
                       if (value) {
-                        deleteProduct(index);
+                        // deleteProduct(index);
                       }
                     }),
               )
