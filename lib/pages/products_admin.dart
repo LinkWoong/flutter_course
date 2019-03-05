@@ -11,7 +11,6 @@ class ProductsAdminPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return DefaultTabController(
       length: 2, //how many tabs will it have
       child: Scaffold(

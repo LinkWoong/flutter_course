@@ -15,14 +15,32 @@ class Products extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Image.asset(products[index]['image']),
-          Text(products[index]['title']),
+          // SizedBox(height: 10.0,),
+          Container(
+            margin: EdgeInsets.only(top: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center, // mainAxisAlignment depends on Row or Col you used
+              children: <Widget>[
+                Text(
+                  products[index]['title'],
+                  style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, fontFamily: 'Oswald'),
+                ),
+                SizedBox(width: 10.0,),
+                Text(
+                  products[index]['price'].toString(), //Text widget
+                  style: TextStyle(fontSize: 26.0, ),
+                )
+              ],
+            )
+
+          ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton(
                 child: Text('Details'),
-                onPressed: () => Navigator.pushNamed<bool>(
-                            context, '/product/' + index.toString()) // using named route
+                onPressed: () => Navigator.pushNamed<bool>(context,
+                            '/product/' + index.toString()) // using named route
                         .then((bool value) {
                       if (value) {
                         // deleteProduct(index);
