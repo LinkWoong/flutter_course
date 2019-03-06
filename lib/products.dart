@@ -17,22 +17,51 @@ class Products extends StatelessWidget {
           Image.asset(products[index]['image']),
           // SizedBox(height: 10.0,),
           Container(
-            margin: EdgeInsets.only(top: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center, // mainAxisAlignment depends on Row or Col you used
-              children: <Widget>[
-                Text(
-                  products[index]['title'],
-                  style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, fontFamily: 'Oswald'),
+              margin: EdgeInsets.only(top: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment
+                    .center, // mainAxisAlignment depends on Row or Col you used
+                children: <Widget>[
+                  Flexible(
+                    flex: 10,
+                    child: Text(
+                      products[index]['title'],
+                      style: TextStyle(
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Oswald'),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  Expanded(
+                    flex: 10,
+                    child: Container(
+                      child: Text(
+                        '\$${products[index]['price'].toString()}', //Text widget
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).accentColor,
+                          borderRadius: BorderRadius.circular(6.0)),
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                    ),
+                  )
+                ],
+              )),
+          DecoratedBox(
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 1.0,
                 ),
-                SizedBox(width: 10.0,),
-                Text(
-                  products[index]['price'].toString(), //Text widget
-                  style: TextStyle(fontSize: 26.0, ),
-                )
-              ],
-            )
-
+                borderRadius: BorderRadius.circular(5.0)),
+            child: Padding(
+              child: Text('Union Square, San Francisco'),
+              padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+            ),
           ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
