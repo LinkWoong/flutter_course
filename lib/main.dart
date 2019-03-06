@@ -39,19 +39,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.deepOrange,
-        accentColor: Colors.deepPurple,
-        fontFamily: 'Oswald'
-      ),
+          brightness: Brightness.light,
+          primarySwatch: Colors.deepOrange,
+          accentColor: Colors.deepPurple,
+          fontFamily: 'Oswald'),
       // Auth page is always the first page
       home: AuthPage(),
       // register named routes, so page navigation could be implemented using name identifier
       routes: {
-        '/products': (BuildContext context) =>
-            ProductsPage(_products),
-        '/admin': (BuildContext context) =>
-            ProductsAdminPage(_addProduct, _deleteProduct), // identifier, a named route
+        '/products': (BuildContext context) => ProductsPage(_products),
+        '/admin': (BuildContext context) => ProductsAdminPage(
+            _addProduct, _deleteProduct), // identifier, a named route
       },
       // executed when navigated to a named route, which is not registered
       // return a route where we want to go to
@@ -68,9 +66,10 @@ class _MyAppState extends State<MyApp> {
               int.parse(pathElements[2]); // parse the String into int
           return MaterialPageRoute<bool>(
             builder: (BuildContext context) => ProductPage(
-                  _products[index]['title'],
-                  _products[index]['image'],
-                ), // passing a data into ProductPage
+                _products[index]['title'],
+                _products[index]['image'],
+                _products[index]['description'],
+                _products[index]['price']), // passing a data into ProductPage
           );
         }
       },
