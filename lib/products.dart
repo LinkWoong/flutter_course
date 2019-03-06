@@ -22,33 +22,27 @@ class Products extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment
                     .center, // mainAxisAlignment depends on Row or Col you used
                 children: <Widget>[
-                  Flexible(
-                    flex: 10,
-                    child: Text(
-                      products[index]['title'],
-                      style: TextStyle(
-                          fontSize: 26.0,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Oswald'),
-                    ),
+                  Text(
+                    products[index]['title'],
+                    style: TextStyle(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Oswald'),
                   ),
                   SizedBox(
                     width: 10.0,
                   ),
-                  Expanded(
-                    flex: 10,
-                    child: Container(
-                      child: Text(
-                        '\$${products[index]['price'].toString()}', //Text widget
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).accentColor,
-                          borderRadius: BorderRadius.circular(6.0)),
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                  Container(
+                    child: Text(
+                      '\$${products[index]['price'].toString()}', //Text widget
+                      style: TextStyle(color: Colors.white),
                     ),
-                  )
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).accentColor,
+                        borderRadius: BorderRadius.circular(6.0)),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                  ),
                 ],
               )),
           DecoratedBox(
@@ -66,8 +60,9 @@ class Products extends StatelessWidget {
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlatButton(
-                child: Text('Details'),
+              IconButton(
+                icon: Icon(Icons.info),
+                color: Theme.of(context).accentColor,
                 onPressed: () => Navigator.pushNamed<bool>(context,
                             '/product/' + index.toString()) // using named route
                         .then((bool value) {
@@ -75,6 +70,13 @@ class Products extends StatelessWidget {
                         // deleteProduct(index);
                       }
                     }),
+              ),
+              IconButton(
+                icon: Icon(Icons.favorite_border),
+                color: Colors.red,
+                // TODO: Finish navigation when clicking on the heart icon
+                onPressed: () => Navigator.pushNamed(
+                    context, '/product/' + index.toString()),
               )
             ],
           )

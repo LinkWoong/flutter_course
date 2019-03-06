@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class ProductPage extends StatelessWidget {
-  // passing data from external
   final String title;
   final String imageUrl;
+  final String description;
+  final double price;
 
+  ProductPage(this.title, this.imageUrl, this.description, this.price);
+  // passing data from external
+  // final List<Map<String, dynamic>> products;
   _showWarningDialog(BuildContext context) {
     return showDialog(
         context: context,
@@ -32,7 +36,6 @@ class ProductPage extends StatelessWidget {
         });
   }
 
-  ProductPage(this.title, this.imageUrl);
   @override
   Widget build(BuildContext context) {
     // Replace the homepage, so return a new scaffold
@@ -49,16 +52,48 @@ class ProductPage extends StatelessWidget {
                   CrossAxisAlignment.center, // from left to right
               children: <Widget>[
                 Image.asset(imageUrl),
-                Container(padding: EdgeInsets.all(10.0), child: Text(title)),
                 Container(
                     padding: EdgeInsets.all(10.0),
-                    child: RaisedButton(
-                      color: Theme.of(context).accentColor,
-                      child: Text('DELETE'),
-                      onPressed: () {
-                        _showWarningDialog(context);
-                      }, // return to previous page, true -> Delete the page
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Oswald'),
                     )),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'Union Square, San Francisco',
+                      style:
+                          TextStyle(fontFamily: 'Oswald', color: Colors.grey),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Container(
+                      child: Text(
+                        '|',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                    ),
+                    Text(
+                      '\$' + price.toString(),
+                      style:
+                          TextStyle(fontFamily: 'Oswald', color: Colors.grey),
+                    )
+                  ],
+                ),
+                SizedBox(height: 10.0),
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    description,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ],
             )),
         // The onWillPop argument receives a function that concerns about left upper corner return button.

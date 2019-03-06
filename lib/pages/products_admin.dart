@@ -19,10 +19,11 @@ class ProductsAdminPage extends StatelessWidget {
               children: <Widget>[
                 AppBar(
                   automaticallyImplyLeading: false,
-                  title: Text('Drawer'),
+                  title: Text('Choose'),
                 ),
                 ListTile(
-                  title: Text('Go back to the products page'),
+                  leading: Icon(Icons.shop),
+                  title: Text('All products'),
                   onTap: () {
                     Navigator.pushReplacementNamed(context, '/products'); // '/' route has been registered in the main.dart file
                     // However, the list of products will be cleared. The reason for that is replacement of navigation stack.
