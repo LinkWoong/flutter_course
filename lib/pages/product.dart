@@ -40,7 +40,7 @@ class ProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Replace the homepage, so return a new scaffold
     // However, when clicking the default return button which locates on upper left corner, the returned value would be null
-    // To solve this issue, wrap the scafold in a WillPopScope() widget.
+    // To solve this issue, wrap the scaffold in a WillPopScope() widget.
     return WillPopScope(
         child: Scaffold(
             appBar: AppBar(
