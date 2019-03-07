@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './price_tag.dart';
 
 // detail page
 class Products extends StatelessWidget {
@@ -32,17 +33,8 @@ class Products extends StatelessWidget {
                   SizedBox(
                     width: 10.0,
                   ),
-                  Container(
-                    child: Text(
-                      '\$${products[index]['price'].toString()}', //Text widget
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).accentColor,
-                        borderRadius: BorderRadius.circular(6.0)),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
-                  ),
+                  // outsourcing the price widget into a separate class
+                  PriceTag(products[index]['price'].toString()),
                 ],
               )),
           DecoratedBox(
