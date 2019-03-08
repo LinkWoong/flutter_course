@@ -19,4 +19,5 @@ class PriceTag extends StatelessWidget{
       padding:
       EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
     );
-  }}
+  }
+}
