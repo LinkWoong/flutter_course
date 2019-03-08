@@ -17,46 +17,74 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   String descriptionValue = '';
   double priceValue = 0.0;
 
+  Widget _buildTitleTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Product Title'),
+      autofocus: false,
+      maxLines: 1,
+      onChanged: (String value) {
+        setState(() {
+          titleValue = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildDescriptionTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Product Description'),
+      autofocus: false,
+      maxLines: 4,
+      onChanged: (String value) {
+        setState(() {
+          descriptionValue = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildPriceTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Product Price'),
+      keyboardType: TextInputType.number, // limit the input into number
+      autofocus: false,
+      onChanged: (String value) {
+        setState(() {
+          priceValue = double.parse(value);
+        });
+      },
+    );
+  }
+
+  void _submitForm() {
+    final Map<String, dynamic> product = {
+      'title': titleValue,
+      'description': descriptionValue,
+      'price': priceValue,
+      'image': 'assets/food.jpg'
+    };
+    widget.addProduct(product);
+    Navigator.pushReplacementNamed(context, '/products');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
+    final double targetPadding = deviceWidth - targetWidth;
+
     return Container(
+      width: targetWidth,
       margin: EdgeInsets.all(10.0),
       child: ListView(
+        padding: EdgeInsets.symmetric(horizontal: targetPadding),
         children: <Widget>[
           // title
-          TextField(
-            decoration: InputDecoration(labelText: 'Product Title'),
-            autofocus: false,
-            onChanged: (String value) {
-              setState(() {
-                titleValue = value;
-              });
-            },
-          ),
-
+          _buildTitleTextField(),
           // Description
-          TextField(
-            decoration: InputDecoration(labelText: 'Product Description'),
-            autofocus: false,
-            maxLines: 4,
-            onChanged: (String value) {
-              setState(() {
-                descriptionValue = value;
-              });
-            },
-          ),
-
+          _buildDescriptionTextField(),
           // Price
-          TextField(
-            decoration: InputDecoration(labelText: 'Product Price'),
-            keyboardType: TextInputType.number, // limit the input into number
-            autofocus: false,
-            onChanged: (String value) {
-              setState(() {
-                priceValue = double.parse(value);
-              });
-            },
-          ),
+          _buildPriceTextField(),
           // create some space
           SizedBox(
             height: 10.0,
@@ -66,37 +94,10 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
             color: Theme.of(context).accentColor,
             textColor: Colors.white,
             child: Text('Save'),
-            onPressed: () {
-              final Map<String, dynamic> product = {
-                'title': titleValue,
-                'description': descriptionValue,
-                'price': priceValue,
-                'image': 'assets/food.jpg'
-              };
-              widget.addProduct(product);
-              Navigator.pushReplacementNamed(context, '/products');
-            },
+            onPressed: _submitForm,
           )
         ],
       ),
     );
-    /*
-    return Center(
-      child: RaisedButton(
-        child: Text('Save'),
-        onPressed: (){
-          showModalBottomSheet(
-            // slides up a sheet from the bottom of the page into which you can put additional information
-            // or actions, your own interface where the user can do something.
-              context: context,
-              builder: (BuildContext context){
-                return Center(
-                  child: Text('This is a modal'),
-                );
-              });
-        },
-      )
-    );
-    */
   }
 }
