@@ -26,7 +26,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
   final Map<String, dynamic> _formData = {
     'title': null,
     'description': null,
-    'price': null
+    'price': null,
+    'image': 'assets/food.jpg'
   };
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -56,7 +57,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         decoration: InputDecoration(labelText: 'Product Description'),
         autofocus: false,
         maxLines: 4,
-        initialValue: widget.product == null ? '' : widget.product['title'],
+        initialValue: widget.product == null ? '' : widget.product['description'],
         validator: (String value) {
           if (value.isEmpty || value.length < 10) {
             return 'Description is required and should be 10 characters long';
