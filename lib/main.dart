@@ -35,6 +35,12 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _updateProduct(int index, Map<String, dynamic> product){
+    setState(() {
+      _products[index] = product;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,7 +56,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/products': (BuildContext context) => ProductsPage(_products),
         '/admin': (BuildContext context) => ProductsAdminPage(
-            _addProduct, _deleteProduct), // identifier, a named route
+            _addProduct, _updateProduct, _deleteProduct, _products), // identifier, a named route
       },
       // executed when navigated to a named route, which is not registered
       // return a route where we want to go to
