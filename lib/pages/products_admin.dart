@@ -52,7 +52,7 @@ class ProductsAdminPage extends StatelessWidget {
               // Note that the num of widgets should equal to the length in DefaultTabController, and AppBar
               children: <Widget>[
                 ProductEditPage(addProduct: addProduct),
-                ProductListPage(products, updateProduct),
+                ProductListPage(products, updateProduct, deleteProduct),
               ])),
     );
   }

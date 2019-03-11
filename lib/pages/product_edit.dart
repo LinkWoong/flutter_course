@@ -57,7 +57,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
         decoration: InputDecoration(labelText: 'Product Description'),
         autofocus: false,
         maxLines: 4,
-        initialValue: widget.product == null ? '' : widget.product['description'],
+        initialValue:
+            widget.product == null ? '' : widget.product['description'],
         validator: (String value) {
           if (value.isEmpty || value.length < 10) {
             return 'Description is required and should be 10 characters long';
@@ -91,26 +92,9 @@ class _ProductEditPageState extends State<ProductEditPage> {
         focusNode: widget._priceFocusNode);
   }
 
-  void _submitForm() {
-    if (!_formKey.currentState.validate()) {
-      return;
-    }
-    _formKey.currentState.save();
-    // when the key currentState becomes save, all onSaved() method in TextFormField widget will be executed
-    if (widget.product == null) {
-      widget.addProduct(_formData);
-    } else {
-      widget.updateProduct(widget.productIndex, _formData);
-    }
-    Navigator.pushReplacementNamed(context, '/products');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
-    final double targetPadding = deviceWidth - targetWidth;
-    final Widget pageContent = GestureDetector(
+  Widget _buildPageContent(
+      BuildContext context, double targetWidth, double targetPadding) {
+    return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode()); // close the
       },
@@ -140,6 +124,29 @@ class _ProductEditPageState extends State<ProductEditPage> {
             ),
           )),
     );
+  }
+
+  void _submitForm() {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+    _formKey.currentState.save();
+    // when the key currentState becomes save, all onSaved() method in TextFormField widget will be executed
+    if (widget.product == null) {
+      widget.addProduct(_formData);
+    } else {
+      widget.updateProduct(widget.productIndex, _formData);
+    }
+    Navigator.pushReplacementNamed(context, '/products');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
+    final double targetPadding = deviceWidth - targetWidth;
+    final Widget pageContent =
+        _buildPageContent(context, targetWidth, targetPadding);
 
     return widget.product == null
         ? pageContent
