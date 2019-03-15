@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/models/product.dart';
 import './product_card.dart';
 
 // detail page
@@ -6,7 +7,7 @@ class Products extends StatelessWidget {
   // Why Stateless? Because change does not happened here
   // It happened in product_manager.dart file
 
-  final List<Map<String, dynamic>> products;
+  final List<Product> products;
   // final Function deleteProduct; // receive the deleted product
   // constructor
   Products(this.products); // optional arguments
