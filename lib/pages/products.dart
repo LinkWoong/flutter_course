@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/products/products.dart';
+import '../models/product.dart';
 
 class ProductsPage extends StatelessWidget {
-  List<Map<String, dynamic>> _products =
-      []; // Create new card when pressing the button
+  final List<Product> _products; // Create new card when pressing the button
   ProductsPage(this._products);
 
   Widget _buildSideDrawer(BuildContext context) {

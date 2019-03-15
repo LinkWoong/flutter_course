@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/models/product.dart';
 import '../widgets/ensure-visible.dart';
 
 // Note that these two "pages" are not actually pages, because it exists as widget embedded in product_admin page.
@@ -7,7 +8,7 @@ class ProductEditPage extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
   final int productIndex;
-  final Map<String, dynamic> product;
+  final Product product;
 
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _descriptionFocusNode = FocusNode();
@@ -42,7 +43,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               return 'Title is required and should be 5 characters long';
             }
           },
-          initialValue: widget.product == null ? '' : widget.product['title'],
+          initialValue: widget.product == null ? '' : widget.product.title,
           onSaved: (String value) {
             _formData['title'] = value;
           },
@@ -57,8 +58,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         decoration: InputDecoration(labelText: 'Product Description'),
         autofocus: false,
         maxLines: 4,
-        initialValue:
-            widget.product == null ? '' : widget.product['description'],
+        initialValue: widget.product == null ? '' : widget.product.description,
         validator: (String value) {
           if (value.isEmpty || value.length < 10) {
             return 'Description is required and should be 10 characters long';
@@ -84,7 +84,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
             }
           },
           initialValue:
-              widget.product == null ? '' : widget.product['price'].toString(),
+              widget.product == null ? '' : widget.product.price.toString(),
           onSaved: (String value) {
             _formData['price'] = double.parse(value);
           },
@@ -133,9 +133,17 @@ class _ProductEditPageState extends State<ProductEditPage> {
     _formKey.currentState.save();
     // when the key currentState becomes save, all onSaved() method in TextFormField widget will be executed
     if (widget.product == null) {
-      widget.addProduct(_formData);
+      widget.addProduct(Product(
+          title: _formData['title'],
+          description: _formData['description'],
+          price: _formData['price'],
+          image: _formData['image']));
     } else {
-      widget.updateProduct(widget.productIndex, _formData);
+      widget.updateProduct(widget.productIndex, Product(
+          title: _formData['title'],
+          description: _formData['description'],
+          price: _formData['price'],
+          image: _formData['image']));
     }
     Navigator.pushReplacementNamed(context, '/products');
   }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/models/product.dart';
 import 'package:flutter_course/widgets/products/products.dart';
 
 class ProductManager extends StatelessWidget {
-  List<Map<String, dynamic>> _products = []; // Create new card when pressing the button
+  final List<Product> _products; // Create new card when pressing the button
   ProductManager(this._products);
 
   @override
