@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/models/product.dart';
 import 'package:flutter_course/widgets/products/products.dart';
 
 class ProductManager extends StatelessWidget {
-  final List<Product> _products; // Create new card when pressing the button
-  ProductManager(this._products);
-
   @override
   Widget build(BuildContext context) {
     // context: It stores the meta data information like the general theme of app
@@ -18,7 +14,7 @@ class ProductManager extends StatelessWidget {
         child: ProductControl(), // passing a function reference to another class for initialization.
       ),*/
       Expanded(
-          child: Products(_products)), // expand the full screen, will hit performance issue
+          child: Products()), // expand the full screen, will hit performance issue
     ]);
   }
 }
