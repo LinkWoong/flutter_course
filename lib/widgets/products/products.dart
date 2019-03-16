@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/product.dart';
+import 'package:flutter_course/scoped_models/products.dart';
+import 'package:scoped_model/scoped_model.dart';
 import './product_card.dart';
 
 // detail page
@@ -7,19 +9,15 @@ class Products extends StatelessWidget {
   // Why Stateless? Because change does not happened here
   // It happened in product_manager.dart file
 
-  final List<Product> products;
-  // final Function deleteProduct; // receive the deleted product
-  // constructor
-  Products(this.products); // optional arguments
-
   // default display while no products being added
-  Widget _buildProductLists() {
+  Widget _buildProductLists(List<Product> products) {
     Widget productCard = Center(child: Text('No products found'));
     if (products.length > 0) {
       productCard = ListView.builder(
           // ListView在item个数未知的情况下表现很差，ListView.builder则可以停止渲染已经跳过的部分
           // ListView.builder接收一个函数
-          itemBuilder: (BuildContext context, int index) => ProductCard(products[index], index),
+          itemBuilder: (BuildContext context, int index) =>
+              ProductCard(products[index], index),
           itemCount: products.length);
     }
     return productCard;
@@ -27,7 +25,11 @@ class Products extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildProductLists(); // make sure the build method returns something.
+    // this function will execute whenever model changes(data changes)
+    return ScopedModelDescendant<ProductsModel>(
+        builder: (BuildContext context, Widget child, ProductsModel model) {
+      return _buildProductLists(model.products); // avoid accepting data as arguments(otherwise codes will be infinite)
+    });
     /*
     return products.length > 0 ?
     ListView.builder(itemBuilder: _buildProductItem, itemCount: products.length) :
