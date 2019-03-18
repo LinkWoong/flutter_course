@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import '../scoped_models/main.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -30,9 +32,10 @@ class _AuthPageState extends State<AuthPage> {
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       maxLines: 1,
-      validator: (String value){
-        if(value.isEmpty
-            || !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(value)){
+      validator: (String value) {
+        if (value.isEmpty ||
+            !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                .hasMatch(value)) {
           return 'Email cannot be empty and should be in the correct format';
         }
       },
@@ -48,8 +51,8 @@ class _AuthPageState extends State<AuthPage> {
       obscureText: true, // hide the input
       autofocus: false,
       maxLines: 1,
-      validator: (String value){
-        if(value.isEmpty || value.length < 5){
+      validator: (String value) {
+        if (value.isEmpty || value.length < 5) {
           return 'Password cannot be empty and password minimum length is 5';
         }
       },
@@ -71,12 +74,12 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm() {
-    if(!_formKey.currentState.validate() || !_formData['acceptTerms']){
+  void _submitForm(Function login) {
+    if (!_formKey.currentState.validate() || !_formData['acceptTerms']) {
       return;
     }
-    print(_formData);
     _formKey.currentState.save();
+    login(_formData['email'], _formData['password']);
     Navigator.pushReplacementNamed(context, '/products');
   }
 
@@ -112,11 +115,15 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                         // navigate to products page
                         Center(
-                          child: RaisedButton(
-                              color: Theme.of(context).primaryColor,
-                              textColor: Colors.white,
-                              child: Text('Login'),
-                              onPressed: _submitForm),
+                          child: ScopedModelDescendant<MainModel>(builder:
+                              (BuildContext context, Widget child,
+                                  MainModel model) {
+                            return RaisedButton(
+                                color: Theme.of(context).primaryColor,
+                                textColor: Colors.white,
+                                child: Text('Login'),
+                                onPressed: () => _submitForm(model.login));
+                          }),
                         )
                       ],
                     ),

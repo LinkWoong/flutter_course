@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/pages/auth.dart';
-import 'package:flutter_course/scoped_models/products.dart';
+import 'package:flutter_course/scoped_models/main.dart';
 import './pages/products.dart';
 import './pages/products_admin.dart';
 import './pages/product.dart';
@@ -21,8 +21,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<ProductsModel>(
-      model: ProductsModel(),
+    return ScopedModel<MainModel>(
+      model: MainModel(),
       // instantiate once, then pass it around in widget tree implicitly without doing manual wire up
       child: MaterialApp(
         theme: ThemeData(
@@ -32,9 +32,10 @@ class _MyAppState extends State<MyApp> {
             buttonColor: Colors.deepPurple,
             fontFamily: 'Oswald'),
         // Auth page is always the first page
-        home: AuthPage(),
+        // home: AuthPage(),
         // register named routes, so page navigation could be implemented using name identifier
         routes: {
+          '/': (BuildContext context) => AuthPage(),
           '/products': (BuildContext context) => ProductsPage(),
           '/admin': (BuildContext context) =>
               ProductsAdminPage(), // identifier, a named route
@@ -56,6 +57,7 @@ class _MyAppState extends State<MyApp> {
                 builder: (BuildContext context) =>
                     ProductPage(index));
           }
+          return null;
         },
         // This executes when onGenerateRoute fails, it is a default route
         onUnknownRoute: (RouteSettings settings) {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/product.dart';
+import 'package:flutter_course/scoped_models/main.dart';
 import 'package:flutter_course/widgets/products/price_tag.dart';
 import 'package:flutter_course/widgets/ui_elements/title_default.dart';
 import 'package:flutter_course/widgets/products/address_tag.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductCard extends StatelessWidget {
   final Product products;
@@ -43,12 +45,20 @@ class ProductCard extends StatelessWidget {
                 }
               }),
         ),
-        IconButton(
-          icon: Icon(Icons.favorite_border),
-          color: Colors.red,
-          // TODO: Finish navigation when clicking on the heart icon
-          onPressed: () => Navigator.pushNamed(
-              context, '/product/' + productIndex.toString()),
+        ScopedModelDescendant(
+          builder: (BuildContext context, Widget child, MainModel model) {
+            return IconButton(
+              icon: Icon(model.allProducts[productIndex].isFavorite
+                  ? Icons.favorite
+                  : Icons.favorite_border),
+              color: Colors.red,
+              // TODO: Finish navigation when clicking on the heart icon
+              onPressed: () {
+                model.selectProduct(productIndex);
+                model.toggleProductFavoriteStatus();
+              },
+            );
+          },
         )
       ],
     );
@@ -63,6 +73,7 @@ class ProductCard extends StatelessWidget {
           // SizedBox(height: 10.0,),
           _buildTitlePriceRow(),
           AddressTag('Union Square, San Francisco'),
+          Text(products.userEmail),
           _buildActionButton(context),
         ],
       ),

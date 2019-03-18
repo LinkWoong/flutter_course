@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/product.dart';
-import 'package:flutter_course/scoped_models/products.dart';
+import 'package:flutter_course/scoped_models/main.dart';
 import '../widgets/ui_elements/title_default.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'dart:async';
@@ -71,8 +71,8 @@ class ProductPage extends StatelessWidget {
     // However, when clicking the default return button which locates on upper left corner, the returned value would be null
     // To solve this issue, wrap the scaffold in a WillPopScope() widget.
     return WillPopScope(
-        child: ScopedModelDescendant(builder: (BuildContext context, Widget child, ProductsModel model){
-          final Product product = model.products[productIndex];
+        child: ScopedModelDescendant(builder: (BuildContext context, Widget child, MainModel model){
+          final Product product = model.allProducts[productIndex];
           return Scaffold(
               appBar: AppBar(
                 title: Text('Product detail'),
