@@ -69,7 +69,7 @@ class ProductCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.asset(products.image),
+          Image.network(products.image),
           // SizedBox(height: 10.0,),
           _buildTitlePriceRow(),
           AddressTag('Union Square, San Francisco'),

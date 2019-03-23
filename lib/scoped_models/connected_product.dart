@@ -7,27 +7,31 @@ import '../models/user.dart';
 import 'package:http/http.dart' as http;
 
 mixin ConnectedProducts on Model {
+
   List<Product> _products = [];
   User _authenticatedUser;
   int _selProductIndex;
+
   void addProduct(
       // TODO: Send data to the server
       String title,
       String description,
       String image,
-      double price) {
+      String price) {
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
       'image':
           'https://cdn.newsapi.com.au/image/v1/551af2930c81cf6c4aaa1c5d9f1c075f',
-      'price': price.toString()
+      'price': price.toString(),
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
     };
 
     // Convert the Map productData to Json
     // post the product and save the returned unique id
     Future<Response> response = postProduct(json.encode(productData));
-    response.then((Response response){
+    response.then((Response response) {
       final Map<String, dynamic> responseData = json.decode(response.data);
       print(responseData);
       final Product newProduct = Product(
@@ -86,14 +90,32 @@ mixin ProductsModel on ConnectedProducts {
       client.badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
     };
-    dio.get('https://flutter-products-82ea3.firebaseio.com/product.json').then((Response response){
-      print(response.data);
+    dio
+        .get('https://flutter-products-82ea3.firebaseio.com/product.json')
+        .then((Response response) {
+      // print(response.data);
+      final List<Product> fetchedProductList = [];
+      final Map<String, dynamic> productListData = response.data;
+      productListData
+          .forEach((String productId, dynamic productData) {
+        final Product product = Product(
+            id: productId,
+            title: productData['title'],
+            description: productData['description'],
+            price: productData['price'],
+            image: productData['image'],
+            userEmail: productData['userEmail'],
+            userId: productData['userId']);
+        fetchedProductList.add(product);
+      });
+      _products = fetchedProductList;
+      notifyListeners();
       // print(json.decode(response.data));
     });
   }
 
   void updateProduct(
-      String title, String description, String image, double price) {
+      String title, String description, String image, String price) {
     final Product newProduct = Product(
         title: title,
         description: description,
