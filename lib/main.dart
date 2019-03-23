@@ -21,8 +21,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    final MainModel model = MainModel();
     return ScopedModel<MainModel>(
-      model: MainModel(),
+      model: model,
       // instantiate once, then pass it around in widget tree implicitly without doing manual wire up
       child: MaterialApp(
         theme: ThemeData(
@@ -36,7 +37,7 @@ class _MyAppState extends State<MyApp> {
         // register named routes, so page navigation could be implemented using name identifier
         routes: {
           '/': (BuildContext context) => AuthPage(),
-          '/products': (BuildContext context) => ProductsPage(),
+          '/products': (BuildContext context) => ProductsPage(model),
           '/admin': (BuildContext context) =>
               ProductsAdminPage(), // identifier, a named route
         },
@@ -62,7 +63,7 @@ class _MyAppState extends State<MyApp> {
         // This executes when onGenerateRoute fails, it is a default route
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
-              builder: (BuildContext context) => ProductsPage());
+              builder: (BuildContext context) => ProductsPage(model));
         },
       ),
     );
