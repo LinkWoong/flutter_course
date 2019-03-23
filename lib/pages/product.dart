@@ -37,7 +37,7 @@ class ProductPage extends StatelessWidget {
         });
   }
 
-  Widget _buildAddressPriceRow(double price){
+  Widget _buildAddressPriceRow(String price){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
