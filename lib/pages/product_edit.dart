@@ -147,13 +147,15 @@ class _ProductEditPageState extends State<ProductEditPage> {
     // when the key currentState becomes save, all onSaved() method in TextFormField widget will be executed
     if (selectedProductIndex == null) {
       addProduct(_formData['title'], _formData['description'],
-          _formData['image'], _formData['price']).then((_) => Navigator.pushReplacementNamed(context, '/products')
-          .then((_) => setSelectedProduct(null)));
+              _formData['image'], _formData['price'])
+          .then((_) => Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => setSelectedProduct(null)));
     } else {
       updateProduct(_formData['title'], _formData['description'],
-          _formData['image'], _formData['price']);
+              _formData['image'], _formData['price'])
+          .then((_) => Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => setSelectedProduct(null)));
     }
-    ;
   }
 
   @override

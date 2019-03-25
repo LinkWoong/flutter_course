@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import './product_edit.dart';
 import './product_list.dart';
-
+import '../scoped_models/main.dart';
 class ProductsAdminPage extends StatelessWidget {
+  final MainModel model;
+  ProductsAdminPage(this.model);
+
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
       child: Column(
@@ -45,7 +48,7 @@ class ProductsAdminPage extends StatelessWidget {
               // Note that the num of widgets should equal to the length in DefaultTabController, and AppBar
               children: <Widget>[
                 ProductEditPage(),
-                ProductListPage(),
+                ProductListPage(model),
               ])),
     );
   }

@@ -4,7 +4,7 @@ class Product {
   final String id;
   final String title;
   final String description;
-  final String price;
+  final double price;
   final String image;
   final bool isFavorite;
   final String userEmail;
