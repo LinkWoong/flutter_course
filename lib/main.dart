@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
           '/': (BuildContext context) => AuthPage(),
           '/products': (BuildContext context) => ProductsPage(model),
           '/admin': (BuildContext context) =>
-              ProductsAdminPage(), // identifier, a named route
+              ProductsAdminPage(model), // identifier, a named route
         },
         // executed when navigated to a named route, which is not registered
         // return a route where we want to go to

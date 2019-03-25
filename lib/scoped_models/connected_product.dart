@@ -7,7 +7,6 @@ import '../models/user.dart';
 import 'package:http/http.dart' as http;
 
 mixin ConnectedProducts on Model {
-
   List<Product> _products = [];
   User _authenticatedUser;
   int _selProductIndex;
@@ -18,13 +17,13 @@ mixin ConnectedProducts on Model {
       String title,
       String description,
       String image,
-      String price) {
+      double price) {
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
       'image':
           'https://cdn.newsapi.com.au/image/v1/551af2930c81cf6c4aaa1c5d9f1c075f',
-      'price': price.toString(),
+      'price': price,
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id
     };
@@ -34,7 +33,6 @@ mixin ConnectedProducts on Model {
     // post the product and save the returned unique id
     Future<Response> response = postProduct(json.encode(productData));
     response.then((Response response) {
-
       final Map<String, dynamic> responseData = json.decode(response.data);
       print(responseData);
       final Product newProduct = Product(
@@ -80,11 +78,31 @@ mixin ProductsModel on ConnectedProducts {
 
   // remove the viewed product
   void deleteProduct() {
+    _isLoading = true;
+    final deletedProductId = selectedProduct.id;
     _products.removeAt(_selProductIndex);
+    _selProductIndex = null;
     notifyListeners();
+    var dio = new Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (HttpClient client) {
+      client.findProxy = (uri) {
+        //proxy all request to localhost:8888
+        return "PROXY 127.0.0.1:1087";
+      };
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    };
+
+    dio.delete('https://flutter-products-82ea3.firebaseio.com/product/$deletedProductId.json').then((Response response){
+      _isLoading = false;
+
+      notifyListeners();
+    });
+
   }
 
-  void fetchProducts() async {
+  Future<Null> fetchProducts() async {
     _isLoading = true;
     notifyListeners();
     var dio = new Dio();
@@ -97,19 +115,19 @@ mixin ProductsModel on ConnectedProducts {
       client.badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
     };
-    dio
+    return dio
         .get('https://flutter-products-82ea3.firebaseio.com/product.json')
         .then((Response response) {
       // print(response.data);
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = response.data;
-      if(productListData == null){
+      if (productListData == null) {
         _isLoading = false;
+        print("*************The response is empty*************");
         notifyListeners();
         return;
       }
-      productListData
-          .forEach((String productId, dynamic productData) {
+      productListData.forEach((String productId, dynamic productData) {
         final Product product = Product(
             id: productId,
             title: productData['title'],
@@ -127,17 +145,50 @@ mixin ProductsModel on ConnectedProducts {
     });
   }
 
-  void updateProduct(
-      String title, String description, String image, String price) {
-    final Product newProduct = Product(
-        title: title,
-        description: description,
-        image: image,
-        price: price,
-        userEmail: selectedProduct.userEmail,
-        userId: selectedProduct.userId);
-    _products[selectedProductIndex] = newProduct;
+  Future<Null> updateProduct(
+      String title, String description, String image, double price) {
+    _isLoading = true;
     notifyListeners();
+    // Setting up the proxy configuration
+    var dio = new Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (HttpClient client) {
+      client.findProxy = (uri) {
+        //proxy all request to localhost:8888
+        return "PROXY 127.0.0.1:1087";
+      };
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    };
+
+    final Map<String, dynamic> updateData = {
+      'title': title,
+      'description': description,
+      'image':
+          'https://cdn.newsapi.com.au/image/v1/551af2930c81cf6c4aaa1c5d9f1c075f',
+      'price': price,
+      'userEmail': selectedProduct.userEmail,
+      'userId': selectedProduct.userId
+    };
+
+    // update the product which is indexed by the unique id
+    return dio
+        .put(
+            'https://flutter-products-82ea3.firebaseio.com/product/${selectedProduct.id}.json',
+            data: json.encode(updateData))
+        .then((Response response) {
+      _isLoading = false;
+      final Product newProduct = Product(
+          id: selectedProduct.id,
+          title: title,
+          description: description,
+          image: image,
+          price: price,
+          userEmail: selectedProduct.userEmail,
+          userId: selectedProduct.userId);
+      _products[selectedProductIndex] = newProduct;
+      notifyListeners();
+    });
   }
 
   void selectProduct(int index) {
@@ -204,9 +255,8 @@ mixin UserModel on ConnectedProducts {
   }
 }
 
-
-mixin UtilityModel on ConnectedProducts{
-  bool get isLoading{
+mixin UtilityModel on ConnectedProducts {
+  bool get isLoading {
     return _isLoading;
   }
 }

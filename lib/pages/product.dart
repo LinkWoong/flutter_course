@@ -7,37 +7,9 @@ import 'dart:async';
 
 class ProductPage extends StatelessWidget {
   final int productIndex;
-
   ProductPage(this.productIndex);
-  // passing data from external
-  // final List<Map<String, dynamic>> products;
-  _showWarningDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Are you sure'),
-            content: Text('This action cannot be undone'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('DISCARD'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              FlatButton(
-                child: Text('CONTINUE'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context, true);
-                },
-              )
-            ],
-          );
-        });
-  }
 
-  Widget _buildAddressPriceRow(String price){
+  Widget _buildAddressPriceRow(double price){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -82,7 +54,7 @@ class ProductPage extends StatelessWidget {
                 crossAxisAlignment:
                 CrossAxisAlignment.center, // from left to right
                 children: <Widget>[
-                  Image.asset(product.image),
+                  Image.network(product.image),
                   Container(
                       padding: EdgeInsets.all(10.0), child: TitleDefault(product.title)),
                   _buildAddressPriceRow(product.price),
