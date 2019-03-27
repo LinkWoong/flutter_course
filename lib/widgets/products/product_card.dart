@@ -29,38 +29,38 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildActionButton(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          icon: Icon(Icons.info),
-          color: Theme.of(context).accentColor,
-          onPressed: () => Navigator.pushNamed<bool>(
-                      context,
-                      '/product/' +
-                          productIndex.toString()) // using named route
-                  .then((bool value) {
-                if (value) {
-                  // deleteProduct(index);
-                }
-              }),
-        ),
-        ScopedModelDescendant(
-          builder: (BuildContext context, Widget child, MainModel model) {
-            return IconButton(
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.info),
+              color: Theme.of(context).accentColor,
+              onPressed: () => Navigator.pushNamed<bool>(
+                          context,
+                          '/product/' +
+                              model.allProducts[productIndex].id) // using named route
+                      .then((bool value) {
+                    if (value) {
+                      // deleteProduct(index);
+                    }
+                  }),
+            ),
+            IconButton(
               icon: Icon(model.allProducts[productIndex].isFavorite
                   ? Icons.favorite
                   : Icons.favorite_border),
               color: Colors.red,
               // TODO: Finish navigation when clicking on the heart icon
               onPressed: () {
-                model.selectProduct(productIndex);
+                model.selectProduct(model.allProducts[productIndex].id);
                 model.toggleProductFavoriteStatus();
               },
-            );
-          },
-        )
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 
