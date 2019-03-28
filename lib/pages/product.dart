@@ -52,7 +52,7 @@ class ProductPage extends StatelessWidget {
                   image: NetworkImage(product.image),
                   height: 300.0,
                   fit: BoxFit.cover,
-                  placeholder: AssetImage('assets/backgroud.jpg'),
+                  placeholder: AssetImage('assets/background.jpg'),
                 ),
                 Container(
                     padding: EdgeInsets.all(10.0),
