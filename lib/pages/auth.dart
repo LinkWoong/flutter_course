@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/main.dart';
 
+enum AuthMode { SignUp, Login }
+
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -17,6 +19,8 @@ class _AuthPageState extends State<AuthPage> {
   };
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _passwordTextController = TextEditingController();
+  AuthMode _authMode = AuthMode.Login;
 
   DecorationImage _buildBackgroundImage() {
     return DecorationImage(
@@ -45,11 +49,29 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
+  Widget _buildPasswordConfirmTextField() {
+    return TextFormField(
+      decoration: InputDecoration(labelText: 'Confirm Password'),
+      autofocus: false,
+      obscureText: _authMode == AuthMode.Login ? true : false,
+      maxLines: 1,
+      validator: (String value) {
+        if (_passwordTextController.text != value) {
+          return 'Password does not match';
+        }
+      },
+      onSaved: (String value) {
+        _formData['password'] = value;
+      },
+    );
+  }
+
   Widget _buildPasswordTextField() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'password'),
-      obscureText: true, // hide the input
+      obscureText: _authMode == AuthMode.Login ? true : false, // hide the input
       autofocus: false,
+      controller: _passwordTextController,
       maxLines: 1,
       validator: (String value) {
         if (value.isEmpty || value.length < 5) {
@@ -74,13 +96,39 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login) {
+  void _submitForm(Function login, Function singup) async {
     if (!_formKey.currentState.validate() || !_formData['acceptTerms']) {
       return;
     }
     _formKey.currentState.save();
-    login(_formData['email'], _formData['password']);
-    Navigator.pushReplacementNamed(context, '/products');
+    if (_authMode == AuthMode.Login) {
+      login(_formData['email'], _formData['password']);
+      Navigator.pushReplacementNamed(context, '/products');
+    } else {
+      // only when signup successful then navigate to products page
+      final Map<String, dynamic> success =
+          await singup(_formData['email'], _formData['password']);
+      if (success['success']) {
+        Navigator.pushReplacementNamed(context, '/products');
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('An Error occurred'),
+                content: Text(success['message']),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
+    }
   }
 
   @override
@@ -108,10 +156,24 @@ class _AuthPageState extends State<AuthPage> {
                       children: <Widget>[
                         _buildEmailTextField(),
                         _buildPasswordTextField(),
+                        _authMode == AuthMode.SignUp
+                            ? _buildPasswordConfirmTextField()
+                            : Container(),
                         _buildAcceptSwitch(),
                         // add some space
                         SizedBox(
                           height: 10.0,
+                        ),
+                        FlatButton(
+                          child: Text(
+                              'Switch to ${_authMode == AuthMode.Login ? 'SignUp' : 'Login'}'),
+                          onPressed: () {
+                            setState(() {
+                              _authMode = _authMode == AuthMode.Login
+                                  ? AuthMode.SignUp
+                                  : AuthMode.Login;
+                            });
+                          },
                         ),
                         // navigate to products page
                         Center(
@@ -122,7 +184,8 @@ class _AuthPageState extends State<AuthPage> {
                                 color: Theme.of(context).primaryColor,
                                 textColor: Colors.white,
                                 child: Text('Login'),
-                                onPressed: () => _submitForm(model.login));
+                                onPressed: () =>
+                                    _submitForm(model.login, model.signup));
                           }),
                         )
                       ],

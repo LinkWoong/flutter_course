@@ -73,7 +73,7 @@ class ProductCard extends StatelessWidget {
             image: NetworkImage(products.image),
             height: 300.0,
             fit: BoxFit.cover,
-            placeholder: AssetImage('assets/backgroud.jpg'),
+            placeholder: AssetImage('assets/background.jpg'),
           ),
           // SizedBox(height: 10.0,),
           _buildTitlePriceRow(),

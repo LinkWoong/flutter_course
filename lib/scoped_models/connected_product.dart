@@ -6,6 +6,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
+import 'package:http/http.dart' as http;
 
 mixin ConnectedProducts on Model {
   List<Product> _products = [];
@@ -46,15 +47,15 @@ mixin ConnectedProducts on Model {
       final Response response = await dio.post(
           'https://flutter-products-82ea3.firebaseio.com/product.json',
           data: productData);
-
       if (response.statusCode != 200 && response.statusCode != 201) {
         // return code indicating failed
+        print("statuscode != 200!");
         _isLoading = false;
         notifyListeners();
         return false;
       }
-
-      final Map<String, dynamic> responseData = json.decode(response.data);
+      print(response.data);
+      final Map<String, dynamic> responseData = response.data;
       print(responseData);
       final Product newProduct = Product(
           id: responseData['name'],
@@ -69,6 +70,8 @@ mixin ConnectedProducts on Model {
       notifyListeners();
       return true;
     } catch (error) {
+      print("We got an error here");
+      print(error.toString());
       _isLoading = false;
       notifyListeners();
       return false;
@@ -204,7 +207,7 @@ mixin ProductsModel on ConnectedProducts {
         notifyListeners();
         return false;
       }
-      _isLoading = false;
+
       final Product newProduct = Product(
           id: selectedProduct.id,
           title: title,
@@ -214,6 +217,7 @@ mixin ProductsModel on ConnectedProducts {
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
       _products[selectedProductIndex] = newProduct;
+      _isLoading = false;
       notifyListeners();
       return true;
     } catch (error) {
@@ -271,12 +275,16 @@ mixin ProductsModel on ConnectedProducts {
   }
 
   Product get selectedProduct {
-    if (selectedProductIndex == null) {
+    if (selectedProductId == null) {
       return null;
     }
     return _products.firstWhere((Product product) {
       return product.id == _selProductId;
     });
+  }
+
+  String get selectedProductId {
+    return _selProductId;
   }
 
   bool get displayFavoritesOnly {
@@ -288,6 +296,46 @@ mixin UserModel on ConnectedProducts {
   void login(String email, String password) {
     _authenticatedUser =
         new User(id: 'c13063716100', email: email, password: password);
+  }
+
+  Future<Map<String, dynamic>> signup(String email, String password) async {
+    // proxy setup
+    var dio = new Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (HttpClient client) {
+      client.findProxy = (uri) {
+        //proxy all request to localhost:8888
+        return "PROXY 127.0.0.1:1087";
+      };
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    };
+
+    final Map<String, dynamic> authData = {
+      "email": email,
+      "password": password,
+      "returnSecureToken": true
+    };
+
+    var encodedAuthData = json.encode(authData);
+    print(encodedAuthData);
+
+    final Response response = await dio.post(
+        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAQVjpNexpmWltlIM9y5vSZ04E1R2d7pRY",
+        data: encodedAuthData,
+        options: Options(headers: {'Content-Type': 'application/json'}));
+
+    final Map<String, dynamic> responseData = json.decode(response.data);
+    String message = 'Something went wrong';
+    bool hasError = true;
+
+    if (responseData.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authentication succeeded';
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+      message = 'Email already exists';
+    }
+    return {'success': !hasError, 'message': message};
   }
 }
 
