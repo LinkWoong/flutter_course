@@ -293,9 +293,46 @@ mixin ProductsModel on ConnectedProducts {
 }
 
 mixin UserModel on ConnectedProducts {
-  void login(String email, String password) {
-    _authenticatedUser =
-        new User(id: 'c13063716100', email: email, password: password);
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    // _authenticatedUser =
+    // new User(id: 'c13063716100', email: email, password: password);
+    var dio = new Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (HttpClient client) {
+      client.findProxy = (uri) {
+        //proxy all request to localhost:8888
+        return "PROXY 127.0.0.1:1087";
+      };
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    };
+
+    final Map<String, dynamic> authData = {
+      "email": email,
+      "password": password,
+      "returnSecureToken": true
+    };
+
+    var encodedAuthData = json.encode(authData);
+    print(encodedAuthData);
+    final Response response = await dio.post(
+        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAQVjpNexpmWltlIM9y5vSZ04E1R2d7pRY",
+        data: encodedAuthData,
+        options: Options(headers: {'Content-Type': 'application/json'}));
+    final Map<String, dynamic> responseData = response.data;
+    print(responseData);
+    String message = 'Something went wrong';
+    bool hasError = true;
+
+    if (responseData.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authentication succeeded';
+    } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
+      message = 'Email was not found';
+    } else if (responseData['error']['message'] == 'INVALID_PASSWORD'){
+      message = 'Invalid password';
+    }
+    return {'success': !hasError, 'message': message};
   }
 
   Future<Map<String, dynamic>> signup(String email, String password) async {
@@ -325,7 +362,7 @@ mixin UserModel on ConnectedProducts {
         data: encodedAuthData,
         options: Options(headers: {'Content-Type': 'application/json'}));
 
-    final Map<String, dynamic> responseData = json.decode(response.data);
+    final Map<String, dynamic> responseData = response.data;
     String message = 'Something went wrong';
     bool hasError = true;
 
