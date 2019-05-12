@@ -6,7 +6,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
-import 'package:http/http.dart' as http;
+import '../models/auth.dart';
 
 mixin ConnectedProducts on Model {
   List<Product> _products = [];
@@ -45,7 +45,7 @@ mixin ConnectedProducts on Model {
 
     try {
       final Response response = await dio.post(
-          'https://flutter-products-82ea3.firebaseio.com/product.json',
+          'https://flutter-products-82ea3.firebaseio.com/product.json?auth=${_authenticatedUser.token}',
           data: productData);
       if (response.statusCode != 200 && response.statusCode != 201) {
         // return code indicating failed
@@ -105,7 +105,7 @@ mixin ProductsModel on ConnectedProducts {
 
     try {
       final Response response = await dio.delete(
-          'https://flutter-products-82ea3.firebaseio.com/product/$deletedProductId.json');
+          'https://flutter-products-82ea3.firebaseio.com/product/$deletedProductId.json?auth=${_authenticatedUser.token}');
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
         notifyListeners();
@@ -136,7 +136,7 @@ mixin ProductsModel on ConnectedProducts {
     };
     try {
       final Response response = await dio
-          .get('https://flutter-products-82ea3.firebaseio.com/product.json');
+          .get('https://flutter-products-82ea3.firebaseio.com/product.json?auth=${_authenticatedUser.token}');
       // print(response.data);
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = response.data;
@@ -200,7 +200,7 @@ mixin ProductsModel on ConnectedProducts {
       };
 
       final Response response = await dio.put(
-          'https://flutter-products-82ea3.firebaseio.com/product/${selectedProduct.id}.json',
+          'https://flutter-products-82ea3.firebaseio.com/product/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
           data: json.encode(updateData));
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
@@ -293,7 +293,9 @@ mixin ProductsModel on ConnectedProducts {
 }
 
 mixin UserModel on ConnectedProducts {
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<Map<String, dynamic>> authenticate(String email, String password, [AuthMode mode = AuthMode.Login]) async {
+    _isLoading = true;
+    notifyListeners();
     // _authenticatedUser =
     // new User(id: 'c13063716100', email: email, password: password);
     var dio = new Dio();
@@ -313,12 +315,20 @@ mixin UserModel on ConnectedProducts {
       "returnSecureToken": true
     };
 
-    var encodedAuthData = json.encode(authData);
-    print(encodedAuthData);
-    final Response response = await dio.post(
-        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAQVjpNexpmWltlIM9y5vSZ04E1R2d7pRY",
-        data: encodedAuthData,
-        options: Options(headers: {'Content-Type': 'application/json'}));
+    Response response;
+
+    if(mode == AuthMode.Login){
+      response = await dio.post(
+          "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAQVjpNexpmWltlIM9y5vSZ04E1R2d7pRY",
+          data: json.encode(authData),
+          options: Options(headers: {'Content-Type': 'application/json'}));
+    } else {
+      response = await dio.post(
+          "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAQVjpNexpmWltlIM9y5vSZ04E1R2d7pRY",
+          data: json.encode(authData),
+          options: Options(headers: {'Content-Type': 'application/json'}));
+    }
+
     final Map<String, dynamic> responseData = response.data;
     print(responseData);
     String message = 'Something went wrong';
@@ -327,49 +337,12 @@ mixin UserModel on ConnectedProducts {
     if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Authentication succeeded';
+      _authenticatedUser = User(id: responseData['localId'], email: email, token: responseData['idToken']);
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'Email was not found';
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD'){
       message = 'Invalid password';
-    }
-    return {'success': !hasError, 'message': message};
-  }
-
-  Future<Map<String, dynamic>> signup(String email, String password) async {
-    // proxy setup
-    var dio = new Dio();
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        (HttpClient client) {
-      client.findProxy = (uri) {
-        //proxy all request to localhost:8888
-        return "PROXY 127.0.0.1:1087";
-      };
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-    };
-
-    final Map<String, dynamic> authData = {
-      "email": email,
-      "password": password,
-      "returnSecureToken": true
-    };
-
-    var encodedAuthData = json.encode(authData);
-    print(encodedAuthData);
-
-    final Response response = await dio.post(
-        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAQVjpNexpmWltlIM9y5vSZ04E1R2d7pRY",
-        data: encodedAuthData,
-        options: Options(headers: {'Content-Type': 'application/json'}));
-
-    final Map<String, dynamic> responseData = response.data;
-    String message = 'Something went wrong';
-    bool hasError = true;
-
-    if (responseData.containsKey('idToken')) {
-      hasError = false;
-      message = 'Authentication succeeded';
-    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS'){
       message = 'Email already exists';
     }
     return {'success': !hasError, 'message': message};
